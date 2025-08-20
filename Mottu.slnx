@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Mottu.Api/Mottu.Api.csproj" />
+    <Project Path="src/Mottu.Application/Mottu.Application.csproj" />
+    <Project Path="src/Mottu.Domain/Mottu.Domain.csproj" />
+    <Project Path="src/Mottu.Infra.Data/Mottu.Infra.Data.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/Mottu.Unit.Tests/Mottu.Unit.Tests.csproj" />
+  </Folder>
+</Solution>
