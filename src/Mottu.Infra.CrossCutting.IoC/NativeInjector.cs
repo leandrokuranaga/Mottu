@@ -1,10 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Mottu.Domain.OutboxAggregate;
 using Mottu.Domain.SeedWork;
 using Mottu.Infra.Data;
+using Mottu.Infra.Data.Repositories;
 using Mottu.Infra.HostedService;
+using Mottu.Infra.Utils;
+using Rebus.Config;
+using System.Text;
 
 namespace Mottu.Infra.CrossCutting.IoC
 {
@@ -64,13 +70,8 @@ namespace Mottu.Infra.CrossCutting.IoC
 
         public static IServiceCollection AddServiceBus(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddRebus(configure => configure
-                .Transport(t => t.UseAmazonSQSAsOneWayClient(
-                    accessKeyId: configuration["ServiceBus:AccessKey"],
-                    secretAccessKey: configuration["ServiceBus:SecretKey"],
-                    regionEndpoint: Amazon.RegionEndpoint.GetBySystemName(configuration["ServiceBus:Region"])))
-                .Routing(r => r.TypeBased()
-                    .MapFallback(configuration["ServiceBus:QueueName"])));
+            services.AddRebus(cfg => cfg
+                .Transport(t => t.UseRabbitMqAsOneWayClient(configuration.GetConnectionString("RabbitMq"))));
 
             return services;
         }

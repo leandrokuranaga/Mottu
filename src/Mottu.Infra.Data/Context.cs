@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Mottu.Domain.OutboxAggregate;
 
 namespace Mottu.Infra.Data
 {
@@ -9,11 +10,13 @@ namespace Mottu.Infra.Data
             Database.Migrate();
         }
 
+        public DbSet<Outbox> Outbox { get; set; } = null!;
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(Context).Assembly);
         }
     }
 }

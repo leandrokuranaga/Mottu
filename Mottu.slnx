@@ -13,6 +13,7 @@
     <Project Path="src/Mottu.Infra.CrossCutting.IoC/Mottu.Infra.CrossCutting.IoC.csproj" Id="d9787c23-c5bf-47fc-8026-1772da744b99" />
     <Project Path="src/Mottu.Infra.Data/Mottu.Infra.Data.csproj" />
     <Project Path="src/Mottu.Infra.HostedService/Mottu.Infra.HostedService.csproj" Id="3743e05f-2fa6-43a0-9658-dc3f25e97281" />
+    <Project Path="src/Mottu.Infra.Utils/Mottu.Infra.Utils.csproj" Id="b7d746e1-7105-4548-a993-fdb2ee6d265f" />
   </Folder>
   <Folder Name="/test/">
     <Project Path="test/Mottu.Unit.Tests/Mottu.Unit.Tests.csproj" />
