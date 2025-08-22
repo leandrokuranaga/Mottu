@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Mottu.Domain\Mottu.Domain.csproj" />
+    <ProjectReference Include="..\Mottu.Infra.Data\Mottu.Infra.Data.csproj" />
   </ItemGroup>
 
 </Project>
