@@ -1,0 +1,6 @@
+services:
+  mottu.api:
+    image: ${DOCKER_REGISTRY-}mottuapi
+    build:
+      context: .
+      dockerfile: src/Mottu.Api/Dockerfile

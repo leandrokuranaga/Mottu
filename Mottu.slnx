@@ -18,4 +18,7 @@
   <Folder Name="/test/">
     <Project Path="test/Mottu.Unit.Tests/Mottu.Unit.Tests.csproj" />
   </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
 </Solution>
