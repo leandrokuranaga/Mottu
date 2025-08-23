@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Mottu.Api.SwaggerExamples.Common;
 using Mottu.Application.Common;
+using Mottu.Application.Motorcycle.Models.Response;
 using Mottu.Application.Rent.Models.Request;
 using Mottu.Application.Rent.Models.Response;
 using Mottu.Application.Rent.Services;
@@ -35,15 +37,17 @@ namespace Mottu.Api.Controllers
         [ProducesResponseType(typeof(BaseResponse<object>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status400BadRequest)]
         [SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(GenericErrorBadRequestExample))]
+        [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status404NotFound)]
+        [SwaggerResponseExample(StatusCodes.Status404NotFound, typeof(GenericErrorNotFoundExample))]
         [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status409Conflict)]
         [SwaggerResponseExample(StatusCodes.Status409Conflict, typeof(GenericErrorConflictExample))]
         [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status500InternalServerError)]
         [SwaggerResponseExample(StatusCodes.Status500InternalServerError, typeof(GenericErrorInternalServerExample))]
         public async Task<IActionResult> RentMotorcycleAsync([FromBody] RentRequest request)
         {
-            var result = await service.RentMotorcycle(request);
-            return Response<RentResponse>(BaseResponse<RentResponse>.Ok(null));
-            //return Response<UserResponse>(result.UserId, result);
+            var result = await service.RentMotorcycle(request);            
+
+            return Response<RentResponse>(result.Id, result);
         }
 
         /// <summary>
@@ -53,14 +57,12 @@ namespace Mottu.Api.Controllers
         /// <returns>A rental response</returns>
         [HttpGet("{id:int:min(1)}")]
         [SwaggerOperation(
-            Summary = "Gets a rental by ID.",
-            Description = "Retrieves the details of a rental by its unique identifier. Returns the rental data on success, or an error if the rental is not found or the input is invalid."
+            Summary = "Consults a rental by id",
+            Description = "Consults a rental by id"
         )]
         [ProducesResponseType(typeof(SuccessResponse<RentResponse>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status400BadRequest)]
-        [SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(GenericErrorBadRequestExample))]
-        [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status409Conflict)]
-        [SwaggerResponseExample(StatusCodes.Status409Conflict, typeof(GenericErrorConflictExample))]
+        [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status404NotFound)]
+        [SwaggerResponseExample(StatusCodes.Status404NotFound, typeof(GenericErrorNotFoundExample))]
         [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status500InternalServerError)]
         [SwaggerResponseExample(StatusCodes.Status500InternalServerError, typeof(GenericErrorInternalServerExample))]
         public async Task<IActionResult> GetAsync(int id)
@@ -72,25 +74,27 @@ namespace Mottu.Api.Controllers
         /// <summary>
         /// Returns a rented motorcycle
         /// </summary>
-        /// <param name="id">Motorcycle id to return</param>
+        /// <param name="id">Rental id to return</param>
         /// <param name="returnDate">Date of return of the motorcycle</param>
         /// <returns>A message if its succesfull or not</returns>
         [HttpPatch("{id:int:min(1)}")]
         [SwaggerOperation(
-            Summary = "Creates a new regular user.",
-            Description = "Registers a new user with basic access permissions. Returns the user data on success, or an error if the input is invalid or the email is already in use."
+            Summary = "Returns a rented motorcycle",
+            Description = "Returns a rented motorcycle"
         )]
-        [ProducesResponseType(typeof(SuccessResponse<RentResponse>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status400BadRequest)]
         [SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(GenericErrorBadRequestExample))]
+        [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status404NotFound)]
+        [SwaggerResponseExample(StatusCodes.Status404NotFound, typeof(GenericErrorNotFoundExample))]
         [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status409Conflict)]
         [SwaggerResponseExample(StatusCodes.Status409Conflict, typeof(GenericErrorConflictExample))]
         [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status500InternalServerError)]
         [SwaggerResponseExample(StatusCodes.Status500InternalServerError, typeof(GenericErrorInternalServerExample))]
-        public async Task<IActionResult> UpdateAsync(int id, [FromBody] DateTime returnDate)
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] DateOnly returnDate)
         {
-            var result = await service.ReturnMotorcycle(id, returnDate);
-            return Response(BaseResponse<RentResponse>.Ok(null));
+            await service.ReturnMotorcycle(id, returnDate);
+            return Response(BaseResponse<object>.Ok(null));
         }
     }
 }

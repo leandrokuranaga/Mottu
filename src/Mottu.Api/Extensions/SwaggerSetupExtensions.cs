@@ -1,10 +1,12 @@
 ﻿using Microsoft.OpenApi.Models;
+using Mottu.Api.SwaggerExamples.Couriers;
 using Swashbuckle.AspNetCore.Filters;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace Mottu.Api.Extensions
 {
+
     [ExcludeFromCodeCoverage]
     public static class SwaggerSetupExtensions
     {
@@ -14,9 +16,9 @@ namespace Mottu.Api.Extensions
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "Mottu API",
+                    Title = "Mottu",
                     Version = "v1",
-                    Description = "Mottu API"
+                    Description = "Mottu API",
                 });
 
                 c.DocInclusionPredicate((docName, apiDesc) =>
@@ -38,11 +40,7 @@ namespace Mottu.Api.Extensions
         }
         public static void UseSwaggerDocumentation(this IApplicationBuilder app)
         {
-            app.UseSwagger(c =>
-            {
-                c.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0;
-            });
-
+            app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Mottu API v1");

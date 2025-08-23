@@ -12,6 +12,7 @@ public sealed class Rental : Entity, SeedWork.IAggregateRoot
     public int CourierId { get; set; }
     public ERentalPlan Plan { get; set; }
     public Money DailyPrice { get; set; } = null!;
+    public Money? TotalPrice { get; set; } = null!;
     public DateTime CreatedAtUtc { get; set; }
     public DateOnly StartDate { get; set; }
     public DateOnly ForecastEndDate { get; set; }
@@ -40,14 +41,6 @@ public sealed class Rental : Entity, SeedWork.IAggregateRoot
         };
 
         return rental;
-    }
-
-    public void ActivateIfStartsToday(DateOnly today)
-    {
-        if (Status == ERentalStatus.Pending && StartDate <= today && EndDate is null)
-        {
-            Status = ERentalStatus.Active;
-        }
     }
 
     public (decimal total, decimal dailyBasis, decimal feeOrExtra, bool isEarly, bool isLate) Return(DateOnly endDate)
@@ -87,6 +80,8 @@ public sealed class Rental : Entity, SeedWork.IAggregateRoot
 
         var total = dailyBasis + feeOrExtra;
         Status = ERentalStatus.Closed;
+
+        TotalPrice = new Money(total, DailyPrice.Currency);
 
         return (total, dailyBasis, feeOrExtra, isEarly, isLate);
     }

@@ -23,7 +23,5 @@ namespace Mottu.Domain.MotorcycleAggregate.ValueObjects
         {
             yield return Value;
         }
-
-        public override string ToString() => Value.ToString();
     }
 }

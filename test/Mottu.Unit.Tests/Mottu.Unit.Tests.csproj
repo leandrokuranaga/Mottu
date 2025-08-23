@@ -20,11 +20,4 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="1. Api Layer Tests\" />
-    <Folder Include="2. Application Layer Tests\" />
-    <Folder Include="3. Domain Layer Tests\Entities\" />
-    <Folder Include="3. Domain Layer Tests\ValueObjects\" />
-  </ItemGroup>
-
 </Project>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Mottu.Api.SwaggerExamples.Common;
+using Mottu.Api.SwaggerExamples.Couriers;
 using Mottu.Application.Common;
 using Mottu.Application.Courier.Models.Request;
 using Mottu.Application.Courier.Services;
@@ -30,6 +31,7 @@ namespace Mottu.Api.Controllers
             Summary = "Creates a courier",
             Description = "Creates a courier"
         )]
+        [SwaggerRequestExample(typeof(CreateCourierRequest), typeof(CreateCourierRequestExample))]
         [ProducesResponseType(typeof(BaseResponse<object>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status400BadRequest)]
         [SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(GenericErrorBadRequestExample))]
@@ -40,8 +42,7 @@ namespace Mottu.Api.Controllers
         public async Task<IActionResult> CreateCourierAsync([FromBody] CreateCourierRequest request)
         {
             var result = await service.CreateCourier(request);
-            return Response<object>(BaseResponse<object>.Ok(null));
-            //return Response<UserResponse>(result.UserId, result);
+            return Response<object>(BaseResponse<object>.Ok(result));
         }
 
         /// <summary>
@@ -50,14 +51,16 @@ namespace Mottu.Api.Controllers
         /// <param name="id">The courier id</param>
         /// <param name="file">Photo must be a png or bmp</param>
         /// <returns>Upload photo message return</returns>
-        [HttpPost("{id:int:min(1)}")]
+        [HttpPatch("{id:int:min(1)}")]
         [SwaggerOperation(
             Summary = "Sends a cnh photo for a courier",
             Description = "Uploads a photo for the associated courier"
         )]
-        [ProducesResponseType(typeof(BaseResponse<object>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status400BadRequest)]
         [SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(GenericErrorBadRequestExample))]
+        [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status404NotFound)]
+        [SwaggerResponseExample(StatusCodes.Status404NotFound, typeof(GenericErrorNotFoundExample))]
         [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status409Conflict)]
         [SwaggerResponseExample(StatusCodes.Status409Conflict, typeof(GenericErrorConflictExample))]
         [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status500InternalServerError)]
@@ -66,7 +69,6 @@ namespace Mottu.Api.Controllers
         {
             var result = await service.UploadCNHPhoto(id, file);
             return Response<object>(BaseResponse<object>.Ok(null));
-            //return Response<UserResponse>(result.UserId, result);
         }
 
     }

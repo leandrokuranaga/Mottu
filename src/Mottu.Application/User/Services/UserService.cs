@@ -16,11 +16,11 @@ namespace Mottu.Application.Courier.Services
     )
         : BaseService(notification), IUserService
     {
-        public Task<BaseResponse<object>> CreateCourier(CreateCourierRequest request) => ExecuteAsync<BaseResponse<object>>(async () =>
+        public Task<BaseResponse<object>> CreateCourier(CreateCourierRequest request) => ExecuteAsync(async () =>
         {
             Validate(request, new CreateCourierRequestValidator());
 
-            var courierCNPJ = await userRepository.GetOneNoTracking(x => x.Cnpj.Number.Equals(request.CNPJ, StringComparison.CurrentCultureIgnoreCase));
+            var courierCNPJ = await userRepository.GetOneNoTracking(x => x.Cnpj.Number == request.CNPJ);
 
             if (courierCNPJ is not null)
             {
@@ -28,7 +28,7 @@ namespace Mottu.Application.Courier.Services
                 return BaseResponse<object>.Fail(notification.NotificationModel);
             }
 
-            var courierCNH = await userRepository.GetOneNoTracking(x => x.CnhNumber.Number.Equals(request.CNH, StringComparison.CurrentCultureIgnoreCase));
+            var courierCNH = await userRepository.GetOneNoTracking(x => x.CnhNumber.Number == request.CNH);
 
             if (courierCNH is not null)
             {
@@ -44,9 +44,28 @@ namespace Mottu.Application.Courier.Services
             return BaseResponse<object>.Ok(courier.Id);
         });
 
-        public Task<BaseResponse<object>> UploadCNHPhoto(int id, IFormFile file) => ExecuteAsync<BaseResponse<object>>(async () =>
+        public Task<BaseResponse<object>> UploadCNHPhoto(int id, IFormFile file) => ExecuteAsync(async () =>
         {
-            var courier = await userRepository.GetOneNoTracking(x => x.Id == id);
+            if (file is null || file.Length == 0)
+            {
+                notification.AddNotification("Upload CNH", "File is empty", NotificationModel.ENotificationType.BusinessRules);
+                return BaseResponse<object>.Fail(notification.NotificationModel);
+            }
+
+            var validContentTypes = new[] { "image/png", "image/bmp" };
+            if (!validContentTypes.Contains(file.ContentType.ToLower()))
+            {
+                notification.AddNotification("Upload CNH", "Only bmp or png are accepted", NotificationModel.ENotificationType.BusinessRules);
+                return BaseResponse<object>.Fail(notification.NotificationModel);
+            }
+
+            var ext = Path.GetExtension(file.FileName).ToLower();
+            if (ext != ".png" && ext != ".bmp")
+            {
+                notification.AddNotification("Upload CNH", "Only bmp or png are accepted", NotificationModel.ENotificationType.BusinessRules);
+                return BaseResponse<object>.Fail(notification.NotificationModel);
+            }
+            var courier = await userRepository.GetOneTracking(x => x.Id == id);
 
             if (courier is null)
             {
@@ -54,13 +73,13 @@ namespace Mottu.Application.Courier.Services
                 return BaseResponse<object>.Fail(notification.NotificationModel);
             }
 
-            //jogar no outbox
-
             courier.CnhImageUri = $"couriers/{id}/cnh.jpg";
 
             await userRepository.InsertOrUpdateAsync(courier);
 
             objectStorage.UploadAsync(file, courier.CnhImageUri).GetAwaiter().GetResult();
+
+            await userRepository.SaveChangesAsync();
 
             return BaseResponse<object>.Ok(null);
         });

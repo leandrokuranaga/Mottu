@@ -9,6 +9,5 @@ namespace Mottu.Application.Courier.Models.Request
         public DateOnly BirthdayDate { get; set; }
         public string CNH { get; set; }
         public ECNH TypeCNH { get; set; }
-        public string? CNHUri { get; set; }
     }
 }
