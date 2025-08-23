@@ -59,10 +59,10 @@ namespace Mottu.Application.Rent.Services
             }
 
             var isAvailable = await rentRepository.GetOneNoTracking(x 
-                => x.MotorcycleId == request.IdMotorcycle 
-                && x.Status == Domain.RentalAggregate.Enums.ERentalStatus.Active
-                || x.Status == Domain.RentalAggregate.Enums.ERentalStatus.Pending
-                || x.CourierId == request.IdCourier
+                => (x.MotorcycleId == request.IdMotorcycle 
+                    && (x.Status == Domain.RentalAggregate.Enums.ERentalStatus.Active
+                        || x.Status == Domain.RentalAggregate.Enums.ERentalStatus.Pending))
+                    || x.CourierId == request.IdCourier
                 );
 
             if (isAvailable is not null)
