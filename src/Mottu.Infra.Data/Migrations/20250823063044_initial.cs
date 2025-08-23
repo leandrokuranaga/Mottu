@@ -23,8 +23,8 @@ namespace Mottu.Infra.Data.Migrations
                     Year = table.Column<int>(type: "integer", nullable: false),
                     Brand = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
                     LicensePlate = table.Column<string>(type: "character varying(7)", unicode: false, maxLength: 7, nullable: false),
-                    CreationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    LastModificationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -39,8 +39,8 @@ namespace Mottu.Infra.Data.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Type = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
                     Content = table.Column<string>(type: "text", nullable: false),
-                    OccuredOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ProcessedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    OccuredOn = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ProcessedOn = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -58,10 +58,10 @@ namespace Mottu.Infra.Data.Migrations
                     Plan = table.Column<int>(type: "integer", nullable: false),
                     DailyPrice = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
                     DailyPriceCurrency = table.Column<string>(type: "character varying(3)", unicode: false, maxLength: 3, nullable: false),
-                    CreatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ForecastEndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedAtUtc = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ForecastEndDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Status = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -77,9 +77,9 @@ namespace Mottu.Infra.Data.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false),
                     Role = table.Column<int>(type: "integer", nullable: false),
-                    BirthDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    BirthDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    CreatedAtUtc = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UpdatedAtUtc = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Cnpj = table.Column<string>(type: "character varying(14)", unicode: false, maxLength: 14, nullable: true),
                     CnhNumber = table.Column<string>(type: "character varying(11)", unicode: false, maxLength: 11, nullable: true),
                     CnhCategory = table.Column<int>(type: "integer", nullable: true),
@@ -89,6 +89,15 @@ namespace Mottu.Infra.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Motorcycles",
+                columns: new[] { "Id", "CreationTime", "IsDeleted", "LastModificationTime", "Brand", "LicensePlate", "Year" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), false, null, "Honda", "ABC1234", 2020 },
+                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), false, null, "Yamaha", "XYZ9A23", 2024 }
                 });
 
             migrationBuilder.InsertData(

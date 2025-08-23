@@ -54,7 +54,8 @@ namespace Mottu.Infra.Data.MapEntities
             b.HasIndex(x => x.Status);
 
             b.HasData(RentalSeed.Rentals());
-            b.OwnsOne(x => x.DailyPrice).HasData(RentalSeed.RentalsDailyPrice());
+            b.OwnsOne(r => r.DailyPrice)
+                .HasData(RentalSeed.RentalsDailyPrice());
         }
     }
 }
