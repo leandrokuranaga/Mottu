@@ -8,14 +8,5 @@ namespace Mottu.Infra.Storage
           IFormFile file,
           string objectName,
           CancellationToken ct = default);
-
-        Task<bool> ExistsAsync(string objectName, CancellationToken ct = default);
-
-        Task DeleteAsync(string objectName, CancellationToken ct = default);
-
-        Task<string> GetPresignedReadUrlAsync(
-            string objectName,
-            TimeSpan? expiry = null,
-            CancellationToken ct = default);
     }
 }

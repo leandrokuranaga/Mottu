@@ -15,6 +15,11 @@ WORKDIR /src
 COPY ["src/Mottu.Api/Mottu.Api.csproj", "src/Mottu.Api/"]
 COPY ["src/Mottu.Application/Mottu.Application.csproj", "src/Mottu.Application/"]
 COPY ["src/Mottu.Domain/Mottu.Domain.csproj", "src/Mottu.Domain/"]
+COPY ["src/Mottu.Infra.Storage/Mottu.Infra.Storage.csproj", "src/Mottu.Infra.Storage/"]
+COPY ["src/Mottu.Infra.Utils/Mottu.Infra.Utils.csproj", "src/Mottu.Infra.Utils/"]
+COPY ["src/Mottu.Infra.CrossCutting.IoC/Mottu.Infra.CrossCutting.IoC.csproj", "src/Mottu.Infra.CrossCutting.IoC/"]
+COPY ["src/Mottu.Infra.Data/Mottu.Infra.Data.csproj", "src/Mottu.Infra.Data/"]
+COPY ["src/Mottu.Infra.HostedService/Mottu.Infra.HostedService.csproj", "src/Mottu.Infra.HostedService/"]
 RUN dotnet restore "./src/Mottu.Api/Mottu.Api.csproj"
 COPY . .
 WORKDIR "/src/src/Mottu.Api"

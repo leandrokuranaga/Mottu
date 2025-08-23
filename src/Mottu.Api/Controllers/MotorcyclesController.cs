@@ -4,7 +4,6 @@ using Mottu.Application.Common;
 using Mottu.Application.Motorcycle.Models.Request;
 using Mottu.Application.Motorcycle.Models.Response;
 using Mottu.Application.Motorcycle.Services;
-using Mottu.Application.Rent.Models.Response;
 using Mottu.Domain.SeedWork;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
@@ -38,11 +37,10 @@ namespace Mottu.Api.Controllers
         [SwaggerResponseExample(StatusCodes.Status409Conflict, typeof(GenericErrorConflictExample))]
         [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status500InternalServerError)]
         [SwaggerResponseExample(StatusCodes.Status500InternalServerError, typeof(GenericErrorInternalServerExample))]
-        public async Task<IActionResult> RentMotorcycleAsync([FromBody] CreateMotorcycleRequest request)
+        public async Task<IActionResult> CreateMotorcycleAsync([FromBody] CreateMotorcycleRequest request)
         {
             var result = await service.CreateMotorcycle(request);
-            return Response<MotorcycleResponse>(BaseResponse<MotorcycleResponse>.Ok(null));
-            //return Response<UserResponse>(result.UserId, result);
+            return Response<MotorcycleResponse>(result.Id, result);
         }
 
         /// <summary>
@@ -56,10 +54,8 @@ namespace Mottu.Api.Controllers
             Description = "Gets a specific motorcycle information"
         )]
         [ProducesResponseType(typeof(SuccessResponse<MotorcycleResponse>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status400BadRequest)]
-        [SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(GenericErrorBadRequestExample))]
-        [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status409Conflict)]
-        [SwaggerResponseExample(StatusCodes.Status409Conflict, typeof(GenericErrorConflictExample))]
+        [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status404NotFound)]
+        [SwaggerResponseExample(StatusCodes.Status404NotFound, typeof(GenericErrorNotFoundExample))]
         [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status500InternalServerError)]
         [SwaggerResponseExample(StatusCodes.Status500InternalServerError, typeof(GenericErrorInternalServerExample))]
         public async Task<IActionResult> GetAsync(int id)
@@ -81,8 +77,8 @@ namespace Mottu.Api.Controllers
         [ProducesResponseType(typeof(SuccessResponse<MotorcycleResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status400BadRequest)]
         [SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(GenericErrorBadRequestExample))]
-        [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status409Conflict)]
-        [SwaggerResponseExample(StatusCodes.Status409Conflict, typeof(GenericErrorConflictExample))]
+        [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status404NotFound)]
+        [SwaggerResponseExample(StatusCodes.Status404NotFound, typeof(GenericErrorNotFoundExample))]
         [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status500InternalServerError)]
         [SwaggerResponseExample(StatusCodes.Status500InternalServerError, typeof(GenericErrorInternalServerExample))]
         public async Task<IActionResult> GetAllAsync([FromQuery] string? licensePlate)
@@ -102,17 +98,19 @@ namespace Mottu.Api.Controllers
             Summary = "Update license plate of a motorcycle.",
             Description = "Update license plate of a motorcycle."
         )]
-        [ProducesResponseType(typeof(SuccessResponse<RentResponse>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status400BadRequest)]
         [SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(GenericErrorBadRequestExample))]
+        [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status404NotFound)]
+        [SwaggerResponseExample(StatusCodes.Status404NotFound, typeof(GenericErrorNotFoundExample))]
         [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status409Conflict)]
         [SwaggerResponseExample(StatusCodes.Status409Conflict, typeof(GenericErrorConflictExample))]
         [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status500InternalServerError)]
         [SwaggerResponseExample(StatusCodes.Status500InternalServerError, typeof(GenericErrorInternalServerExample))]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] string licensePlate)
         {
-            var result = await service.UpdateLicensePlate(id, licensePlate);
-            return Response(BaseResponse<RentResponse>.Ok(null));
+            await service.UpdateLicensePlate(id, licensePlate);
+            return Response(BaseResponse<object>.Ok(null));
         }
 
         /// <param name="id">The ID of the motorcycle to delete.</param>
@@ -122,16 +120,16 @@ namespace Mottu.Api.Controllers
             Summary = "Deletes a motorcycle by id.",
             Description = "Deletes a motorcycle by id"
         )]
-        [ProducesResponseType(typeof(SuccessResponse<object>), (int)HttpStatusCode.NoContent)]
-        [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status400BadRequest)]
-        [SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(GenericErrorBadRequestExample))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status409Conflict)]
         [SwaggerResponseExample(StatusCodes.Status409Conflict, typeof(GenericErrorConflictExample))]
+        [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status404NotFound)]
+        [SwaggerResponseExample(StatusCodes.Status404NotFound, typeof(GenericErrorNotFoundExample))]
         [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status500InternalServerError)]
         [SwaggerResponseExample(StatusCodes.Status500InternalServerError, typeof(GenericErrorInternalServerExample))]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var result = await service.DeleteMotorcycle(id);
+            await service.DeleteMotorcycle(id);
             return Response(BaseResponse<object>.Ok(null));
         }
     }

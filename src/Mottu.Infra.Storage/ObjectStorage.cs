@@ -4,7 +4,9 @@ using Minio;
 using Minio.DataModel.Args;
 using Mottu.Infra.Storage;
 using Mottu.Infra.Utils;
+using System.Diagnostics.CodeAnalysis;
 
+[ExcludeFromCodeCoverage]
 public sealed class MinioObjectStorage : IObjectStorage
 {
     private readonly IMinioClient _minio;
@@ -50,42 +52,5 @@ public sealed class MinioObjectStorage : IObjectStorage
         await _minio.PutObjectAsync(putArgs, ct);
 
         return objectName;
-    }
-
-    public async Task<bool> ExistsAsync(string objectName, CancellationToken ct = default)
-    {
-        try
-        {
-            var stat = new StatObjectArgs()
-                .WithBucket(_opt.Bucket)
-                .WithObject(objectName);
-            await _minio.StatObjectAsync(stat, ct);
-            return true;
-        }
-        catch (Minio.Exceptions.ObjectNotFoundException)
-        {
-            return false;
-        }
-    }
-
-    public async Task DeleteAsync(string objectName, CancellationToken ct = default)
-    {
-        await _minio.RemoveObjectAsync(
-            new RemoveObjectArgs()
-                .WithBucket(_opt.Bucket)
-                .WithObject(objectName), ct);
-    }
-
-    public async Task<string> GetPresignedReadUrlAsync(
-        string objectName, TimeSpan? expiry = null, CancellationToken ct = default)
-    {
-        var seconds = (int)(expiry?.TotalSeconds ?? 3600);
-
-        var req = new PresignedGetObjectArgs()
-            .WithBucket(_opt.Bucket)
-            .WithObject(objectName)
-            .WithExpiry(seconds);
-
-        return await _minio.PresignedGetObjectAsync(req);
     }
 }

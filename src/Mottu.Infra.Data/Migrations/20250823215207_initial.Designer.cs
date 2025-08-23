@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mottu.Infra.Data.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250823063044_initial")]
+    [Migration("20250823215207_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -141,7 +141,7 @@ namespace Mottu.Infra.Data.Migrations
                             Id = 1,
                             CourierId = 2,
                             CreatedAtUtc = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ForecastEndDate = new DateTime(2025, 1, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ForecastEndDate = new DateTime(2025, 1, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             MotorcycleId = 1,
                             Plan = 7,
                             StartDate = new DateTime(2025, 1, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -353,8 +353,41 @@ namespace Mottu.Infra.Data.Migrations
                                 });
                         });
 
+                    b.OwnsOne("Mottu.Domain.RentalAggregate.ValueObjects.Money", "TotalPrice", b1 =>
+                        {
+                            b1.Property<int>("RentalId")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("Currency")
+                                .HasMaxLength(3)
+                                .IsUnicode(false)
+                                .HasColumnType("character varying(3)")
+                                .HasColumnName("TotalPriceCurrency");
+
+                            b1.Property<decimal>("Value")
+                                .HasColumnType("decimal(18,2)")
+                                .HasColumnName("TotalPrice");
+
+                            b1.HasKey("RentalId");
+
+                            b1.ToTable("Rentals");
+
+                            b1.WithOwner()
+                                .HasForeignKey("RentalId");
+
+                            b1.HasData(
+                                new
+                                {
+                                    RentalId = 1,
+                                    Currency = "BRL",
+                                    Value = 150.00m
+                                });
+                        });
+
                     b.Navigation("DailyPrice")
                         .IsRequired();
+
+                    b.Navigation("TotalPrice");
                 });
 
             modelBuilder.Entity("Mottu.Domain.UserAggregate.User", b =>

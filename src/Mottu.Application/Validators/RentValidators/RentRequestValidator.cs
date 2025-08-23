@@ -2,9 +2,11 @@
 using Mottu.Application.Rent.Models.Request;
 using Mottu.Domain.RentalAggregate.Enums;
 using Mottu.Domain.RentalAggregate.Services;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Mottu.Application.Validators.RentValidators
 {
+    [ExcludeFromCodeCoverage]
     public class RentRequestValidator : AbstractValidator<RentRequest>
     {
         public RentRequestValidator()
@@ -31,13 +33,13 @@ namespace Mottu.Application.Validators.RentValidators
                     .Must((req, forecast) =>
                     {
                         var (_, _, days) = RentalPlanCatalog.Get((ERentalPlan)req.Plan);
-                        var expected = req.StartDate.Date.AddDays(days - 1);
-                        return forecast.Date == expected;
+                        var expected = req.StartDate.AddDays(days - 1);
+                        return forecast == expected;
                     })
                     .WithMessage(req =>
                     {
                         var (_, _, days) = RentalPlanCatalog.Get((ERentalPlan)req.Plan);
-                        var expected = req.StartDate.Date.AddDays(days - 1);
+                        var expected = req.StartDate.AddDays(days - 1);
                         return $"ForecastEndDate must be StartDate + {days - 1} days (expected {expected:yyyy-MM-dd}).";
                     });
             });
@@ -45,7 +47,7 @@ namespace Mottu.Application.Validators.RentValidators
             When(x => x.EndDate != default, () =>
             {
                 RuleFor(x => x.EndDate)
-                    .Must((req, end) => end.Date >= req.StartDate.Date)
+                    .Must((req, end) => end >= req.StartDate)
                     .WithMessage("EndDate cannot be before StartDate.");
             });
         }
@@ -53,10 +55,10 @@ namespace Mottu.Application.Validators.RentValidators
         private static bool IsValidPlan(int plan)
             => Enum.IsDefined(typeof(ERentalPlan), plan);
 
-        private static bool IsTomorrowOrLater(DateTime startUtc)
+        private static bool IsTomorrowOrLater(DateOnly startDate)
         {
-            var todayUtc = DateTime.UtcNow.Date;
-            return startUtc.Date >= todayUtc.AddDays(1);
+            var todayUtc = DateOnly.FromDateTime(DateTime.UtcNow);
+            return startDate >= todayUtc.AddDays(1);
         }
     }
 }

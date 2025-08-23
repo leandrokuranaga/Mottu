@@ -58,6 +58,8 @@ namespace Mottu.Infra.Data.Migrations
                     Plan = table.Column<int>(type: "integer", nullable: false),
                     DailyPrice = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
                     DailyPriceCurrency = table.Column<string>(type: "character varying(3)", unicode: false, maxLength: 3, nullable: false),
+                    TotalPrice = table.Column<decimal>(type: "numeric(18,2)", nullable: true),
+                    TotalPriceCurrency = table.Column<string>(type: "character varying(3)", unicode: false, maxLength: 3, nullable: true),
                     CreatedAtUtc = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     ForecastEndDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
@@ -102,8 +104,8 @@ namespace Mottu.Infra.Data.Migrations
 
             migrationBuilder.InsertData(
                 table: "Rentals",
-                columns: new[] { "Id", "CourierId", "CreatedAtUtc", "EndDate", "ForecastEndDate", "MotorcycleId", "Plan", "StartDate", "Status", "DailyPriceCurrency", "DailyPrice" },
-                values: new object[] { 1, 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, new DateTime(2025, 1, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 7, new DateTime(2025, 1, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "BRL", 30.00m });
+                columns: new[] { "Id", "CourierId", "CreatedAtUtc", "EndDate", "ForecastEndDate", "MotorcycleId", "Plan", "StartDate", "Status", "DailyPriceCurrency", "DailyPrice", "TotalPriceCurrency", "TotalPrice" },
+                values: new object[] { 1, 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), null, new DateTime(2025, 1, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 7, new DateTime(2025, 1, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "BRL", 30.00m, "BRL", 150.00m });
 
             migrationBuilder.InsertData(
                 table: "Users",

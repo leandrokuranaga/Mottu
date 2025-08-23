@@ -3,9 +3,11 @@ using Mottu.Application.Courier.Models.Request;
 using Mottu.Domain.SeedWork.Exceptions;
 using Mottu.Domain.UserAggregate.Enums;
 using Mottu.Domain.UserAggregate.ValueObjects;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Mottu.Application.Validators.CourierValidators
 {
+    [ExcludeFromCodeCoverage]
     public class CreateCourierRequestValidator : AbstractValidator<CreateCourierRequest>
     {
         public CreateCourierRequestValidator()
@@ -35,13 +37,6 @@ namespace Mottu.Application.Validators.CourierValidators
             RuleFor(x => x.CNH)
                 .NotEmpty().WithMessage("CNH number is required.");
 
-            When(x => !string.IsNullOrWhiteSpace(x.CNHUri), () =>
-            {
-                RuleFor(x => x.CNHUri!)
-                    .Must(IsValidHttpUrl)
-                    .WithMessage("CNHUri must be a valid http/https URL.");
-            });
-
             RuleFor(x => x).Custom((req, ctx) =>
             {
                 try { PersonName.Create(req.Name); }
@@ -61,12 +56,6 @@ namespace Mottu.Application.Validators.CourierValidators
             var age = today.Year - birth.Year;
             if (birth > today.AddYears(-age)) age--;
             return age >= years;
-        }
-
-        private static bool IsValidHttpUrl(string uri)
-        {
-            return Uri.TryCreate(uri, UriKind.Absolute, out var u) &&
-                   (u.Scheme == Uri.UriSchemeHttp || u.Scheme == Uri.UriSchemeHttps);
         }
     }
 }

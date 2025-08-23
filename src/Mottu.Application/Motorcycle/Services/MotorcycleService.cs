@@ -28,9 +28,9 @@ namespace Mottu.Application.Motorcycle.Services
 
             Validate(request, new CreateMotorcycleRequestValidator());
 
-            request.LicensePlate.ToLower().Trim();
+            request.LicensePlate.ToUpper().Trim();
 
-            var licensePlate = await motorcycleRepository.GetOneNoTracking(x => x.LicensePlate.Value.Equals(request.LicensePlate, StringComparison.CurrentCultureIgnoreCase));
+            var licensePlate = await motorcycleRepository.GetOneNoTracking(x => x.LicensePlate.Value == request.LicensePlate);
 
             if (licensePlate is not null)
             {
@@ -42,29 +42,34 @@ namespace Mottu.Application.Motorcycle.Services
 
             motorcycle = DomainMotorcycle.Create(request.Year, request.Brand, request.LicensePlate);
 
-            //converter para objeto outbox
+            var envelope = new
+            {
+                type = "object",
+                version = 1,
+                data = new
+                {
+                    id = motorcycle.Id,
+                    year = motorcycle.Year.Value,
+                    brand = motorcycle.Brand.Value,
+                    licensePlate = motorcycle.LicensePlate.Value
+                }
+            };
 
             Outbox outbox = Outbox.Create(
-                "MotorcycleCreated",
-                JsonSerializer.Serialize(new { motorcycle.Id, motorcycle.LicensePlate, motorcycle.Brand, motorcycle.Year })
+                "plain-json",
+                JsonSerializer.Serialize(envelope)
             );
-
-            await uow.BeginTransactionAsync();
 
             await outboxRepository.InsertOrUpdateAsync(outbox);
             await outboxRepository.SaveChangesAsync();
 
-            await motorcycleRepository.InsertOrUpdateAsync(motorcycle);
-            await motorcycleRepository.SaveChangesAsync();
-
-            await uow.CommitAsync();
-
             return (MotorcycleResponse)motorcycle;
         });
 
-        public Task<BaseResponse<object>> DeleteMotorcycle(int id) => ExecuteAsync<BaseResponse<object>>(async () =>
+        public Task<BaseResponse<object>> DeleteMotorcycle(int id)
+            => ExecuteAsync(async () =>
         {
-            var motorcycle = await motorcycleRepository.GetOneNoTracking(x => x.Id == id);
+            var motorcycle = await motorcycleRepository.GetOneTracking(x => x.Id == id);
 
             if (motorcycle is null)
             {
@@ -74,13 +79,13 @@ namespace Mottu.Application.Motorcycle.Services
 
             var entries = await rentalRepository.GetNoTrackingAsync(x => x.MotorcycleId == id);
 
-            if (entries is not null)
+            if (entries.Any())
             {
                 notification.AddNotification("Delete Motorcycle", "Motorcycle has rental entries and cannot be deleted", NotificationModel.ENotificationType.BusinessRules);
                 return BaseResponse<object>.Fail(notification.NotificationModel);
             }
 
-            await motorcycleRepository.DeleteAsync(motorcycle);
+            motorcycle.MarkAsDeleted();
             await motorcycleRepository.SaveChangesAsync();
 
             return BaseResponse<object>.Ok(null);
@@ -98,7 +103,7 @@ namespace Mottu.Application.Motorcycle.Services
                 return response;
             }
 
-            // converter moto
+            response = (MotorcycleResponse)motorcycle;
 
             return response;
         });
@@ -109,25 +114,37 @@ namespace Mottu.Application.Motorcycle.Services
 
             if (!string.IsNullOrWhiteSpace(licensePlate))
             {
-                licensePlate = licensePlate.ToLower().Trim();
+                licensePlate = licensePlate.ToUpper().Trim();
 
-                var motorcyclesWithLicense = await motorcycleRepository.GetNoTrackingAsync(x => x.LicensePlate.Value.Contains(licensePlate, StringComparison.CurrentCultureIgnoreCase));
+                var motorcyclesWithLicense = await motorcycleRepository
+                   .GetNoTrackingAsync(x =>
+                       x.LicensePlate.Value == licensePlate);
 
-                if (motorcyclesWithLicense is null)
+                if (motorcyclesWithLicense is null || !motorcyclesWithLicense.Any())
                 {
-                    notification.AddNotification("Get Motorcycle", "License plate doesnt exists", NotificationModel.ENotificationType.NotFound);
+                    notification.AddNotification("Get Motorcycle", "License plate doesn't exist", NotificationModel.ENotificationType.NotFound);
                     return response;
                 }
+
+                response = motorcyclesWithLicense
+                    .Select(x => (MotorcycleResponse)x)
+                    .ToList();
+
+                return response;
             }
 
             var motorcycles = await motorcycleRepository.GetAllAsync();
 
+            response = motorcycles
+                .Select(x => (MotorcycleResponse)x)
+                .ToList();
+
             return response;
         });
 
-        public Task<BaseResponse<object>> UpdateLicensePlate(int id, string newLicensePlate) => ExecuteAsync<BaseResponse<object>>(async () =>
+        public Task<BaseResponse<object>> UpdateLicensePlate(int id, string newLicensePlate) => ExecuteAsync(async () =>
         {
-            var updateMotorcycle = await motorcycleRepository.GetOneNoTracking(x => x.Id == id);
+            var updateMotorcycle = await motorcycleRepository.GetOneTracking(x => x.Id == id);
 
             if (updateMotorcycle is null)
             {
@@ -136,7 +153,6 @@ namespace Mottu.Application.Motorcycle.Services
             }
 
             updateMotorcycle.ChangePlate(newLicensePlate);
-
             await motorcycleRepository.SaveChangesAsync();
 
             return BaseResponse<object>.Ok(null);

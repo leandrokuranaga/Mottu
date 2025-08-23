@@ -2,9 +2,11 @@
 using Mottu.Application.Motorcycle.Models.Request;
 using Mottu.Domain.MotorcycleAggregate.ValueObjects;
 using Mottu.Domain.SeedWork.Exceptions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Mottu.Application.Validators.MotorcycleValidators
 {
+    [ExcludeFromCodeCoverage]
     public class CreateMotorcycleRequestValidator : AbstractValidator<CreateMotorcycleRequest>
     {
         public CreateMotorcycleRequestValidator()

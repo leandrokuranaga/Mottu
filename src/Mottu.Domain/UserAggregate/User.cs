@@ -41,28 +41,4 @@ public sealed class User : Entity, SeedWork.IAggregateRoot
             CreatedAtUtc = DateTime.UtcNow
         };
     }
-
-
-
-    public void UpdateCnhImage(string newImageUri)
-    {
-        EnsureCourier();
-        if (string.IsNullOrWhiteSpace(newImageUri))
-            throw new BusinessRulesException("CNH image URI is required.");
-
-        CnhImageUri = newImageUri.Trim();
-        UpdatedAtUtc = DateTime.UtcNow;
-    }
-
-    public bool IsCourierWithCategoryA()
-        => Role == EUserRole.Courier
-           && CnhType is not null
-           && (CnhType == ECNH.A || CnhType == ECNH.AB);
-
-
-    private void EnsureCourier()
-    {
-        if (Role != EUserRole.Courier)
-            throw new BusinessRulesException("Operation allowed only for couriers.");
-    }
 }

@@ -33,6 +33,20 @@ namespace Mottu.Infra.Data.MapEntities
                      .IsRequired();
             });
 
+            b.OwnsOne(x => x.TotalPrice, money =>
+            {
+                money.Property(m => m.Value)
+                     .HasColumnName("TotalPrice")
+                     .HasColumnType("decimal(18,2)")
+                     .IsRequired(true);
+
+                money.Property(m => m.Currency)
+                     .HasColumnName("TotalPriceCurrency")
+                     .HasMaxLength(3)
+                     .IsUnicode(false)
+                     .IsRequired(false);
+            });
+
             b.Property(x => x.CreatedAtUtc).IsRequired();
 
             b.Property(x => x.StartDate)
@@ -56,6 +70,8 @@ namespace Mottu.Infra.Data.MapEntities
             b.HasData(RentalSeed.Rentals());
             b.OwnsOne(r => r.DailyPrice)
                 .HasData(RentalSeed.RentalsDailyPrice());
+            b.OwnsOne(r => r.TotalPrice).HasData(RentalSeed.RentalsTotalPrice());
+
         }
     }
 }

@@ -35,8 +35,10 @@ namespace Mottu.Application.Rent.Services
             return response;
         });
 
-        public Task<BaseResponse<object>> RentMotorcycle(RentRequest request) => ExecuteAsync<BaseResponse<object>>(async () =>
+        public async Task<RentResponse> RentMotorcycle(RentRequest request) 
+            //=> ExecuteAsync(async () =>
         {
+            var response = new RentResponse();
 
             Validate(request, new RentRequestValidator());
 
@@ -45,7 +47,7 @@ namespace Mottu.Application.Rent.Services
             if (courier is null)
             {
                 notification.AddNotification("Get Courier", "Courier not found", NotificationModel.ENotificationType.NotFound);
-                return BaseResponse<object>.Fail(notification.NotificationModel);
+                return response;
             }
 
             var motorcycle = await motorcycleRepository.GetOneNoTracking(x => x.Id == request.IdMotorcycle);
@@ -53,7 +55,20 @@ namespace Mottu.Application.Rent.Services
             if (motorcycle is null)
             {
                 notification.AddNotification("Get Motorcycle", "Motorcycle not found", NotificationModel.ENotificationType.NotFound);
-                return BaseResponse<object>.Fail(notification.NotificationModel);
+                return response;
+            }
+
+            var isAvailable = await rentRepository.GetOneNoTracking(x 
+                => x.MotorcycleId == request.IdMotorcycle 
+                && x.Status == Domain.RentalAggregate.Enums.ERentalStatus.Active
+                || x.Status == Domain.RentalAggregate.Enums.ERentalStatus.Pending
+                || x.CourierId == request.IdCourier
+                );
+
+            if (isAvailable is not null)
+            {
+                notification.AddNotification("Rent Motorcycle", "Motorcycle not available to rent", NotificationModel.ENotificationType.BusinessRules);
+                return response;
             }
 
             var rent = Rental.Create(
@@ -65,11 +80,14 @@ namespace Mottu.Application.Rent.Services
             await rentRepository.InsertOrUpdateAsync(rent);
             await rentRepository.SaveChangesAsync();
 
-            return BaseResponse<object>.Ok(null);
-        });
+            response = (RentResponse)rent;
 
-        public Task<BaseResponse<object>> ReturnMotorcycle(int id, DateTime returnDate)
-           => ExecuteAsync<BaseResponse<object>>(async () =>
+            return response;
+        }
+        //);
+
+        public Task<BaseResponse<object>> ReturnMotorcycle(int id, DateOnly returnDate)
+           => ExecuteAsync(async () =>
            {
                var rental = await rentRepository.GetByIdAsync(id, noTracking: false);
                if (rental is null)
@@ -78,16 +96,10 @@ namespace Mottu.Application.Rent.Services
                    return BaseResponse<object>.Fail(notification.NotificationModel);
                }
 
-               var endDate = DateOnly.FromDateTime(returnDate.Date);
-
-                var (total, dailyBasis, feeOrExtra, isEarly, isLate) = rental.Return(endDate);
-
-                await uow.BeginTransactionAsync();
+                var (total, dailyBasis, feeOrExtra, isEarly, isLate) = rental.Return(returnDate);
 
                 await rentRepository.UpdateAsync(rental);
                 await rentRepository.SaveChangesAsync();
-
-                await uow.CommitAsync();
 
                 var payload = new
                 {
@@ -105,7 +117,7 @@ namespace Mottu.Application.Rent.Services
                     status = rental.Status.ToString()
                 };
 
-                    return BaseResponse<object>.Ok(payload);
+                return BaseResponse<object>.Ok(payload);
            });
     }
 }

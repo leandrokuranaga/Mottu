@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Mottu.Application.Courier.Services;
+using Mottu.Application.Motorcycle.Services;
+using Mottu.Application.Rent.Services;
 using Mottu.Domain.MotorcycleAggregate;
 using Mottu.Domain.OutboxAggregate;
 using Mottu.Domain.RentalAggregate;
@@ -13,9 +16,11 @@ using Mottu.Infra.Storage;
 using Mottu.Infra.Utils;
 using Rebus.Config;
 using Rebus.Retry.Simple;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Mottu.Infra.CrossCutting.IoC
 {
+    [ExcludeFromCodeCoverage]
     public static class NativeInjector
     {
         public static void AddCustomServices(this IServiceCollection services, IConfiguration configuration)
@@ -39,7 +44,7 @@ namespace Mottu.Infra.CrossCutting.IoC
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<INotification, Notification>();
 
-            services.AddHostedService<OutboxProcessor>();
+            services.AddHostedService<OutboxProcessorService>();
 
             #region Repositories
             services.AddScoped<IOutboxRepository, OutboxRepository>();
@@ -50,8 +55,13 @@ namespace Mottu.Infra.CrossCutting.IoC
             #endregion
 
             #region Services
+            services.AddScoped<IRentService, RentService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IMotorcycleService, MotorcycleService>();
+            #endregion
 
-
+            #region Handlers
+            services.AutoRegisterHandlersFromAssemblyOf<MotorcycleRegisteredHandler>();
             #endregion
         }
 
