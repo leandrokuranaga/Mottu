@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mottu.Infra.Data.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250822182914_initial")]
+    [Migration("20250823063044_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -34,19 +34,33 @@ namespace Mottu.Infra.Data.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreationTime")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CreationTime");
 
                     b.ToTable("Motorcycles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreationTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreationTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            IsDeleted = false
+                        });
                 });
 
             modelBuilder.Entity("Mottu.Domain.OutboxAggregate.Outbox", b =>
@@ -60,10 +74,10 @@ namespace Mottu.Infra.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("OccuredOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime?>("ProcessedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -91,13 +105,13 @@ namespace Mottu.Infra.Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime?>("EndDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("ForecastEndDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("MotorcycleId")
                         .HasColumnType("integer");
@@ -106,7 +120,7 @@ namespace Mottu.Infra.Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("StartDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -144,7 +158,7 @@ namespace Mottu.Infra.Data.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("BirthDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("CnhImageUri")
                         .HasMaxLength(500)
@@ -154,13 +168,13 @@ namespace Mottu.Infra.Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("Role")
                         .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAtUtc")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
 
@@ -217,6 +231,18 @@ namespace Mottu.Infra.Data.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("MotorcycleId");
+
+                            b1.HasData(
+                                new
+                                {
+                                    MotorcycleId = 1,
+                                    Value = "Honda"
+                                },
+                                new
+                                {
+                                    MotorcycleId = 2,
+                                    Value = "Yamaha"
+                                });
                         });
 
                     b.OwnsOne("Mottu.Domain.MotorcycleAggregate.ValueObjects.LicensePlate", "LicensePlate", b1 =>
@@ -240,6 +266,18 @@ namespace Mottu.Infra.Data.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("MotorcycleId");
+
+                            b1.HasData(
+                                new
+                                {
+                                    MotorcycleId = 1,
+                                    Value = "ABC1234"
+                                },
+                                new
+                                {
+                                    MotorcycleId = 2,
+                                    Value = "XYZ9A23"
+                                });
                         });
 
                     b.OwnsOne("Mottu.Domain.MotorcycleAggregate.ValueObjects.ManufactureYear", "Year", b1 =>
@@ -257,6 +295,18 @@ namespace Mottu.Infra.Data.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("MotorcycleId");
+
+                            b1.HasData(
+                                new
+                                {
+                                    MotorcycleId = 1,
+                                    Value = 2020
+                                },
+                                new
+                                {
+                                    MotorcycleId = 2,
+                                    Value = 2024
+                                });
                         });
 
                     b.Navigation("Brand")

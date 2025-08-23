@@ -6,6 +6,7 @@ using Mottu.Domain.MotorcycleAggregate;
 using Mottu.Domain.OutboxAggregate;
 using Mottu.Domain.RentalAggregate;
 using Mottu.Domain.SeedWork;
+using System.Text.Json;
 using DomainMotorcycle = Mottu.Domain.MotorcycleAggregate.Motorcycle;
 
 
@@ -43,11 +44,20 @@ namespace Mottu.Application.Motorcycle.Services
 
             //converter para objeto outbox
 
-            //await outboxRepository.InsertOrUpdateAsync(motorcycle);
-            //await outboxRepository.SaveChangesAsync();
+            Outbox outbox = Outbox.Create(
+                "MotorcycleCreated",
+                JsonSerializer.Serialize(new { motorcycle.Id, motorcycle.LicensePlate, motorcycle.Brand, motorcycle.Year })
+            );
+
+            await uow.BeginTransactionAsync();
+
+            await outboxRepository.InsertOrUpdateAsync(outbox);
+            await outboxRepository.SaveChangesAsync();
 
             await motorcycleRepository.InsertOrUpdateAsync(motorcycle);
             await motorcycleRepository.SaveChangesAsync();
+
+            await uow.CommitAsync();
 
             return (MotorcycleResponse)motorcycle;
         });

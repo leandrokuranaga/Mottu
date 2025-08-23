@@ -1,3 +1,4 @@
+using HealthChecks.ApplicationStatus.DependencyInjection;
 using Mottu.Api.Extensions;
 using Mottu.Api.Middlewares;
 using Mottu.Infra.CrossCutting.IoC;
@@ -12,7 +13,14 @@ builder.Configuration
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
     .AddEnvironmentVariables();
 
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddCustomMvc();
+
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+builder.Services.AddApiVersioningConfiguration();
 
 builder.Services.AddCustomServices(builder.Configuration);
 
@@ -21,12 +29,10 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services
     .AddHealthChecks()
     .AddNpgSql(connectionString)
+    .AddApplicationStatus()
     .AddRabbitMQ();
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerDocumentation();
-
 
 builder.Host.UseSerilog((context, services, configuration) =>
 {
@@ -38,13 +44,9 @@ var app = builder.Build();
 app.UseMiddleware<LoggingMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-app.UseRouting();
-
-app.UseCors("AllowAllOrigins");
+app.UseSwaggerDocumentation();
 
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
 
 app.MapControllers();
 

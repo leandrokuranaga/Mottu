@@ -14,34 +14,9 @@ namespace Mottu.Api.Extensions
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "Mottu",
+                    Title = "Mottu API",
                     Version = "v1",
-                    Description = "Mottu - API to manage motorcycle rents"
-                });
-
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    Description = "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.Http,
-                    Scheme = "bearer",
-                    BearerFormat = "JWT"
-                });
-
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
-                        },
-                        Array.Empty<string>()
-                    }
+                    Description = "Mottu API"
                 });
 
                 c.DocInclusionPredicate((docName, apiDesc) =>
@@ -63,7 +38,11 @@ namespace Mottu.Api.Extensions
         }
         public static void UseSwaggerDocumentation(this IApplicationBuilder app)
         {
-            app.UseSwagger();
+            app.UseSwagger(c =>
+            {
+                c.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0;
+            });
+
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Mottu API v1");

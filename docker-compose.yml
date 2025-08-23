@@ -11,8 +11,7 @@ services:
       ObjectStorage__Endpoint: "minio:9000"
       ObjectStorage__AccessKey: "minioadmin"
       ObjectStorage__SecretKey: "minioadmin"
-      ObjectStorage__Bucket: "images"
-      ObjectStorage__UseSSL: "false"
+      ObjectStorage__Bucket: "mottu-bucket"
       RabbitMQ__ConnectionString: "amqp://guest:guest@rabbitmq:5672"
     depends_on:
       - postgres

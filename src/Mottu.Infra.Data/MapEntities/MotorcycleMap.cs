@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Fiap.Infra.Data.MapEntities.Seeds;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Mottu.Domain.MotorcycleAggregate;
+using System.Reflection.Emit;
 
 namespace Mottu.Infra.Data.MapEntities
 {
@@ -46,6 +48,17 @@ namespace Mottu.Infra.Data.MapEntities
             b.HasQueryFilter(x => !x.IsDeleted);
 
             b.HasIndex(x => x.CreationTime);
+
+            b.HasData(MotorcycleSeed.Motorcycles());
+
+            b.OwnsOne(m => m.Year)
+                .HasData(MotorcycleSeed.MotorcycleYear());
+
+            b.OwnsOne(m => m.Brand)
+                .HasData(MotorcycleSeed.MotorcycleBrand());
+
+            b.OwnsOne(m => m.LicensePlate)
+                .HasData(MotorcycleSeed.MotorcycleLicensePlate());
         }
     }
 }

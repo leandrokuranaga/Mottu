@@ -1,30 +1,28 @@
 ﻿using Mottu.Domain.RentalAggregate.Enums;
 
-namespace Fiap.Infra.Data.MapEntities.Seeds
+public static class RentalSeed
 {
-    public static class RentalSeed
-    {
-        public static object[] Rentals() =>
-        [
-            new
-            {
-                Id = 1,
-                MotorcycleId = 1,
-                CourierId = 2,
-                Plan = ERentalPlan.Days7,
-                Status = ERentalStatus.Active,
+    private static DateTime Utc(int y, int m, int d, int hh = 0, int mm = 0, int ss = 0)
+        => new DateTime(y, m, d, hh, mm, ss, DateTimeKind.Utc);
 
-                CreatedAtUtc = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc),
+    public static object[] Rentals() =>
+    [
+        new
+        {
+            Id = 1,
+            MotorcycleId = 1,
+            CourierId = 2,
+            Plan = ERentalPlan.Days7,
+            Status = ERentalStatus.Active,
+            CreatedAtUtc = Utc(2025, 01, 01),
+            StartDate = new DateOnly(2025, 01, 02),
+            ForecastEndDate = new DateOnly(2025, 01, 08),
+            EndDate = (DateOnly?)null
+        }
+    ];
 
-                StartDate = new DateOnly(2025, 01, 02),
-                ForecastEndDate = new DateOnly(2025, 01, 08),
-                EndDate = (DateOnly?)null
-            }
-        ];
-
-        public static object[] RentalsDailyPrice() =>
-        [
-            new { RentalId = 1, Value = 30.00m, Currency = "BRL" }
-        ];
-    }
+    public static object[] RentalsDailyPrice() =>
+    [
+        new { RentalId = 1, Value = 30.00m, Currency = "BRL" }
+    ];
 }
