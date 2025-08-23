@@ -115,10 +115,7 @@ namespace Mottu.Api.Controllers
             return Response(BaseResponse<RentResponse>.Ok(null));
         }
 
-        /// <summary>
-        /// Deletes a motorcycle by id
-        /// </summary>
-        /// <param name="id">The details of the user to create.</param>
+        /// <param name="id">The ID of the motorcycle to delete.</param>
         /// <returns>The deleted Motorcycle</returns>
         [HttpDelete("{id:int:min(1)}")]
         [SwaggerOperation(
