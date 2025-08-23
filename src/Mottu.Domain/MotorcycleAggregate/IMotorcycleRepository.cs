@@ -1,6 +1,8 @@
-﻿namespace Mottu.Domain.MotorcycleAggregate
+﻿using Mottu.Domain.SeedWork;
+
+namespace Mottu.Domain.MotorcycleAggregate
 {
-    internal interface IMotorcycleRepository
+    public interface IMotorcycleRepository : IBaseRepository<Motorcycle>, IUnitOfWork
     {
     }
 }

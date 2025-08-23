@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Mottu.Domain.OutboxAggregate;
+using Mottu.Domain.RentalAggregate;
+using Mottu.Infra.Data.Repositories.Base;
 
 namespace Mottu.Infra.Data.Repositories
 {
-    internal class RentalRepository
+    public class RentalRepository(Context context) : BaseRepository<Rental>(context), IRentalRepository
     {
     }
 }

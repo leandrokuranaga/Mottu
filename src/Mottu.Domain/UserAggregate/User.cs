@@ -21,28 +21,28 @@ public sealed class User : Entity, SeedWork.IAggregateRoot
     public User() { }
 
     public static User CreateCourier(
-        PersonName name,
+        string name,
         DateOnly birthDate,
-        CNPJ cnpj,
-        CNH cnhNumber,
+        string cnpj,
+        string cnhNumber,
         ECNH cnhType,
-        string? cnhImageUri
+        string? cnhImageUri = null
     )
     {
-        var user = new User
+        return new User
         {
-            Name = name,
+            Name = PersonName.Create(name),
             Role = EUserRole.Courier,
             BirthDate = birthDate,
-            Cnpj = cnpj,
-            CnhNumber = cnhNumber,
+            Cnpj = CNPJ.Create(cnpj),
+            CnhNumber = CNH.Create(cnhNumber, cnhType),
             CnhType = cnhType,
             CnhImageUri = cnhImageUri,
             CreatedAtUtc = DateTime.UtcNow
         };
-
-        return user;
     }
+
+
 
     public void UpdateCnhImage(string newImageUri)
     {
@@ -51,12 +51,6 @@ public sealed class User : Entity, SeedWork.IAggregateRoot
             throw new BusinessRulesException("CNH image URI is required.");
 
         CnhImageUri = newImageUri.Trim();
-        UpdatedAtUtc = DateTime.UtcNow;
-    }
-
-    public void UpdateName(PersonName newName)
-    {
-        Name = newName ?? throw new ArgumentNullException(nameof(newName));
         UpdatedAtUtc = DateTime.UtcNow;
     }
 

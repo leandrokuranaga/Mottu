@@ -54,7 +54,5 @@ namespace Mottu.Domain.UserAggregate.ValueObjects
 
         private static bool IsValidCategory(ECNH cat) =>
             cat == ECNH.A || cat == ECNH.B || cat == ECNH.AB;
-
-        public override string ToString() => $"{Number}-{Category}";
     }
 }

@@ -2,7 +2,6 @@
 using Mottu.Domain.RentalAggregate.Enums;
 using Mottu.Domain.RentalAggregate.Services;
 using Mottu.Domain.RentalAggregate.ValueObjects;
-using Mottu.Domain.SeedWork;
 using Mottu.Domain.SeedWork.Exceptions;
 
 namespace Mottu.Domain.RentalAggregate;

@@ -1,6 +1,8 @@
-﻿namespace Mottu.Domain.UserAggregate
+﻿using Mottu.Domain.SeedWork;
+
+namespace Mottu.Domain.UserAggregate
 {
-    public interface IUserRepository
+    public interface IUserRepository : IBaseRepository<User>, IUnitOfWork
     {
     }
 }
