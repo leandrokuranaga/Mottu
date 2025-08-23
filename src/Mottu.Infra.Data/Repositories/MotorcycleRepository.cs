@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Mottu.Domain.MotorcycleAggregate;
+using Mottu.Infra.Data.Repositories.Base;
 
 namespace Mottu.Infra.Data.Repositories
 {
-    internal class MotorcycleRepository
+    public class MotorcycleRepository(Context context) : BaseRepository<Motorcycle>(context), IMotorcycleRepository
     {
     }
 }

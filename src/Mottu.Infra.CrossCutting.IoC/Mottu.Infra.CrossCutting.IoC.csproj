@@ -22,6 +22,7 @@
     <ProjectReference Include="..\Mottu.Domain\Mottu.Domain.csproj" />
     <ProjectReference Include="..\Mottu.Infra.Data\Mottu.Infra.Data.csproj" />
     <ProjectReference Include="..\Mottu.Infra.HostedService\Mottu.Infra.HostedService.csproj" />
+    <ProjectReference Include="..\Mottu.Infra.Storage\Mottu.Infra.Storage.csproj" />
     <ProjectReference Include="..\Mottu.Infra.Utils\Mottu.Infra.Utils.csproj" />
   </ItemGroup>
 

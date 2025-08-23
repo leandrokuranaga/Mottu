@@ -1,6 +1,9 @@
-﻿namespace Mottu.Infra.Data.Repositories
+﻿using Mottu.Domain.UserAggregate;
+using Mottu.Infra.Data.Repositories.Base;
+
+namespace Mottu.Infra.Data.Repositories
 {
-    public class UserRepository
+    public class UserRepository(Context context) : BaseRepository<User>(context), IUserRepository
     {
     }
 }
