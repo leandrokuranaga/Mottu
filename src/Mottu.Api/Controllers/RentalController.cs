@@ -53,8 +53,8 @@ namespace Mottu.Api.Controllers
         /// <returns>A rental response</returns>
         [HttpGet("{id:int:min(1)}")]
         [SwaggerOperation(
-            Summary = "Creates a new regular user.",
-            Description = "Registers a new user with basic access permissions. Returns the user data on success, or an error if the input is invalid or the email is already in use."
+            Summary = "Gets a rental by ID.",
+            Description = "Retrieves the details of a rental by its unique identifier. Returns the rental data on success, or an error if the rental is not found or the input is invalid."
         )]
         [ProducesResponseType(typeof(SuccessResponse<RentResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status400BadRequest)]
