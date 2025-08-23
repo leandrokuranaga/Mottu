@@ -20,8 +20,7 @@ namespace Mottu.Application.Validators.CourierValidators
                 .WithMessage("Name length invalid.");
 
             RuleFor(x => x.BirthdayDate)
-                .NotEmpty().WithMessage("BirthdayDate is required.")
-                .Must(d => d.Date <= DateTime.UtcNow.Date)
+                .Must(d => d <= DateOnly.FromDateTime(DateTime.UtcNow))
                 .WithMessage("BirthdayDate cannot be in the future.")
                 .Must(d => IsAtLeastAge(d, 18))
                 .WithMessage("Courier must be at least 18 years old.");
@@ -30,8 +29,7 @@ namespace Mottu.Application.Validators.CourierValidators
                 .NotEmpty().WithMessage("CNPJ is required.");
 
             RuleFor(x => x.TypeCNH)
-                .NotEmpty().WithMessage("TypeCNH is required.")
-                .Must(s => TryParseCnhCategory(s, out _))
+                .Must(cat => cat == ECNH.A || cat == ECNH.B || cat == ECNH.AB)
                 .WithMessage("TypeCNH must be A, B or AB.");
 
             RuleFor(x => x.CNH)
@@ -52,51 +50,23 @@ namespace Mottu.Application.Validators.CourierValidators
                 try { CNPJ.Create(req.CNPJ); }
                 catch (BusinessRulesException ex) { ctx.AddFailure(nameof(req.CNPJ), ex.Message); }
 
-                if (TryParseCnhCategory(req.TypeCNH, out var cat))
-                {
-                    try { CNH.Create(req.CNH, cat); }
-                    catch (BusinessRulesException ex) { ctx.AddFailure(nameof(req.CNH), ex.Message); }
-                }
-                else
-                {
-                    ctx.AddFailure(nameof(req.TypeCNH), "Invalid CNH category. Allowed: A, B, AB.");
-                }
+                try { CNH.Create(req.CNH, req.TypeCNH); }
+                catch (BusinessRulesException ex) { ctx.AddFailure(nameof(req.CNH), ex.Message); }
             });
         }
 
-        private static bool IsAtLeastAge(DateTime birth, int years)
+        private static bool IsAtLeastAge(DateOnly birth, int years)
         {
-            var today = DateTime.UtcNow.Date;
-            var b = birth.Date;
-            var age = today.Year - b.Year;
-            if (b > today.AddYears(-age)) age--;
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            var age = today.Year - birth.Year;
+            if (birth > today.AddYears(-age)) age--;
             return age >= years;
-        }
-
-        private static bool TryParseCnhCategory(string? s, out ECNH cat)
-        {
-            cat = default;
-            if (string.IsNullOrWhiteSpace(s)) return false;
-
-            var norm = s.Trim().ToUpperInvariant()
-                        .Replace("+", "")
-                        .Replace("-", "")
-                        .Replace(" ", "");
-
-            switch (norm)
-            {
-                case "A": cat = ECNH.A; return true;
-                case "B": cat = ECNH.B; return true;
-                case "AB":
-                case "BA": cat = ECNH.AB; return true;
-                default: return false;
-            }
         }
 
         private static bool IsValidHttpUrl(string uri)
         {
-            return Uri.TryCreate(uri, UriKind.Absolute, out var u)
-                   && (u.Scheme == Uri.UriSchemeHttp || u.Scheme == Uri.UriSchemeHttps);
+            return Uri.TryCreate(uri, UriKind.Absolute, out var u) &&
+                   (u.Scheme == Uri.UriSchemeHttp || u.Scheme == Uri.UriSchemeHttps);
         }
     }
 }

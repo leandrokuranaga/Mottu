@@ -10,6 +10,7 @@ using Mottu.Infra.Data;
 using Mottu.Infra.Data.Repositories;
 using Mottu.Infra.HostedService;
 using Mottu.Infra.Storage;
+using Mottu.Infra.Utils;
 using Rebus.Config;
 using Rebus.Retry.Simple;
 

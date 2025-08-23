@@ -29,15 +29,20 @@ public sealed class User : Entity, SeedWork.IAggregateRoot
         string? cnhImageUri = null
     )
     {
-        return CreateCourier(
-            PersonName(name),
-            birthDate,
-            CNPJ.Create(cnpj),
-            CNH.Create(cnhNumber, cnhType),
-            cnhType,
-            cnhImageUri
-        );
+        return new User
+        {
+            Name = PersonName.Create(name),
+            Role = EUserRole.Courier,
+            BirthDate = birthDate,
+            Cnpj = CNPJ.Create(cnpj),
+            CnhNumber = CNH.Create(cnhNumber, cnhType),
+            CnhType = cnhType,
+            CnhImageUri = cnhImageUri,
+            CreatedAtUtc = DateTime.UtcNow
+        };
     }
+
+
 
     public void UpdateCnhImage(string newImageUri)
     {
