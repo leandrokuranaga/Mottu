@@ -50,7 +50,6 @@ namespace Mottu.Unit.Tests._1._Api_Layer_Tests
 
             var resp = new MotorcycleResponse
             {
-                Id = 10,
                 Year = 2024,
                 Brand = "Yamaha",
                 LicensePlate = "ABC1D23",
@@ -81,7 +80,6 @@ namespace Mottu.Unit.Tests._1._Api_Layer_Tests
             var id = 5;
             var resp = new MotorcycleResponse
             {
-                Id = id,
                 Year = 2020,
                 Brand = "Honda",
                 LicensePlate = "DEF2G34",
@@ -98,7 +96,6 @@ namespace Mottu.Unit.Tests._1._Api_Layer_Tests
             var ok = Assert.IsType<OkObjectResult>(result);
             var baseResponse = Assert.IsType<BaseResponse<MotorcycleResponse>>(ok.Value);
             Assert.True(baseResponse.Success);
-            Assert.Equal(id, baseResponse.Data.Id);
 
             _serviceMock.Verify(s => s.GetMotorcycle(id), Times.Once);
         }
@@ -113,8 +110,8 @@ namespace Mottu.Unit.Tests._1._Api_Layer_Tests
             // Arrange
             var list = new List<MotorcycleResponse>
             {
-                new() { Id = 1, Year = 2021, Brand = "Honda", LicensePlate = "AAA1B23", CreationTime = DateTime.UtcNow },
-                new() { Id = 2, Year = 2022, Brand = "Yamaha", LicensePlate = "BBB2C34", CreationTime = DateTime.UtcNow }
+                new() { Year = 2021, Brand = "Honda", LicensePlate = "AAA1B23", CreationTime = DateTime.UtcNow },
+                new() { Year = 2022, Brand = "Yamaha", LicensePlate = "BBB2C34", CreationTime = DateTime.UtcNow }
             };
 
             _serviceMock.Setup(s => s.GetMotorcycles(null))
@@ -139,7 +136,7 @@ namespace Mottu.Unit.Tests._1._Api_Layer_Tests
             var filter = "AAA";
             var list = new List<MotorcycleResponse>
             {
-                new() { Id = 1, Year = 2021, Brand = "Honda", LicensePlate = "AAA1B23", CreationTime = DateTime.UtcNow }
+                new() { Year = 2021, Brand = "Honda", LicensePlate = "AAA1B23", CreationTime = DateTime.UtcNow }
             };
 
             _serviceMock.Setup(s => s.GetMotorcycles(filter))

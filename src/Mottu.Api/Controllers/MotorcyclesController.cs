@@ -40,7 +40,7 @@ namespace Mottu.Api.Controllers
         public async Task<IActionResult> CreateMotorcycleAsync([FromBody] CreateMotorcycleRequest request)
         {
             var result = await service.CreateMotorcycle(request);
-            return Response<MotorcycleResponse>(result.Id, result);
+            return Response<MotorcycleResponse>(0, result);
         }
 
         /// <summary>

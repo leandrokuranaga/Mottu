@@ -53,7 +53,7 @@ namespace Mottu.Application.Motorcycle.Services
 
             if (d.Year == 2024)
             {
-                logger.LogInformation("Special motorcycle registered: {MotorcycleId}", d.Id);
+                logger.LogInformation("Special motorcycle registered: {MotorcycleBrand}", d.Brand);
             }
 
             DomainMotorcycle motorcycle;
