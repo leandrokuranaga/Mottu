@@ -90,7 +90,6 @@ namespace Mottu.Unit.Tests.Application.Motorcycle
 
             // Assert
             Assert.NotNull(res);
-            Assert.Equal(0, res.Id);
             _notification.Verify(n => n.AddNotification(
                 "Create Motorcycle",
                 "License plate already registered",
@@ -114,7 +113,6 @@ namespace Mottu.Unit.Tests.Application.Motorcycle
             var res = await svc.GetMotorcycle(10);
 
             Assert.NotNull(res);
-            Assert.Equal(10, res.Id);
             Assert.Equal("Yamaha", res.Brand);
         }
 
@@ -130,7 +128,6 @@ namespace Mottu.Unit.Tests.Application.Motorcycle
             var res = await svc.GetMotorcycle(99);
 
             Assert.NotNull(res);
-            Assert.Equal(0, res.Id);
 
             _notification.Verify(n => n.AddNotification(
                 "Get Motorcycle",

@@ -16,7 +16,6 @@ namespace Mottu.Api.SwaggerExamples.Rentals
                 IdCourier = 3,
                 IdMotorcycle = 2,
                 StartDate = DateOnly.FromDateTime(today.AddDays(1)),
-                EndDate = DateOnly.FromDateTime(today.AddDays(7)),
                 ForecastEndDate = DateOnly.FromDateTime(today.AddDays(7)),
                 Plan = 7
             };

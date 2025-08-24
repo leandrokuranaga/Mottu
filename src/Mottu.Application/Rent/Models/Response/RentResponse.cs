@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public decimal DailyCharge { get; set; }
+        public decimal TotalCharge { get; set; }
         public int IdCourier { get; set; }
         public int IdMotorcycle { get; set; }
         public DateOnly StartDate { get; set; }
@@ -16,6 +17,7 @@
         {
             Id = rent.Id,
             DailyCharge = rent.DailyPrice.Value,
+            TotalCharge = rent.TotalPrice?.Value ?? 0,
             IdCourier = rent.CourierId,
             IdMotorcycle = rent.MotorcycleId,
             StartDate = rent.StartDate,

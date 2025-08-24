@@ -43,13 +43,6 @@ namespace Mottu.Application.Validators.RentValidators
                         return $"ForecastEndDate must be StartDate + {days - 1} days (expected {expected:yyyy-MM-dd}).";
                     });
             });
-
-            When(x => x.EndDate != default, () =>
-            {
-                RuleFor(x => x.EndDate)
-                    .Must((req, end) => end >= req.StartDate)
-                    .WithMessage("EndDate cannot be before StartDate.");
-            });
         }
 
         private static bool IsValidPlan(int plan)

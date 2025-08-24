@@ -44,7 +44,6 @@ namespace Mottu.Unit.Tests._1._Api_Layer_Tests
                 IdMotorcycle = 5,
                 StartDate = new DateOnly(2025, 8, 24),
                 ForecastEndDate = new DateOnly(2025, 8, 30),
-                EndDate = new DateOnly(2025, 8, 30),
                 Plan = 7
             };
 
