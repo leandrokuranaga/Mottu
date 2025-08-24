@@ -35,8 +35,8 @@ namespace Mottu.Application.Rent.Services
             return response;
         });
 
-        public async Task<RentResponse> RentMotorcycle(RentRequest request) 
-            //=> ExecuteAsync(async () =>
+        public Task<RentResponse> RentMotorcycle(RentRequest request)
+            => ExecuteAsync(async () =>
         {
             var response = new RentResponse();
 
@@ -83,8 +83,7 @@ namespace Mottu.Application.Rent.Services
             response = (RentResponse)rent;
 
             return response;
-        }
-        //);
+        });
 
         public Task<BaseResponse<object>> ReturnMotorcycle(int id, DateOnly returnDate)
            => ExecuteAsync(async () =>
