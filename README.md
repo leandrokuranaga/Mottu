@@ -22,8 +22,8 @@ docker-compose up -d
 
 ---
 
-Link do wiki: https://github.com/leandrokuranaga/Mottu/wiki
-Link do board: https://github.com/users/leandrokuranaga/projects/23
+[Wiki](https://github.com/leandrokuranaga/Mottu/wiki)
+[Board](https://github.com/users/leandrokuranaga/projects/23)
 
 
 ## Build & Tests
