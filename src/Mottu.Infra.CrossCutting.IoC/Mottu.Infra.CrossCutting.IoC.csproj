@@ -6,4 +6,25 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.19" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.8" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.14.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <PackageReference Include="Rebus" Version="8.8.0" />
+    <PackageReference Include="Rebus.RabbitMq" Version="10.0.2" />
+    <PackageReference Include="Rebus.ServiceProvider" Version="10.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Mottu.Application\Mottu.Application.csproj" />
+    <ProjectReference Include="..\Mottu.Domain\Mottu.Domain.csproj" />
+    <ProjectReference Include="..\Mottu.Infra.Data\Mottu.Infra.Data.csproj" />
+    <ProjectReference Include="..\Mottu.Infra.HostedService\Mottu.Infra.HostedService.csproj" />
+    <ProjectReference Include="..\Mottu.Infra.Storage\Mottu.Infra.Storage.csproj" />
+    <ProjectReference Include="..\Mottu.Infra.Utils\Mottu.Infra.Utils.csproj" />
+  </ItemGroup>
+
 </Project>

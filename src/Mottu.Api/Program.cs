@@ -1,25 +1,58 @@
+using HealthChecks.ApplicationStatus.DependencyInjection;
+using Mottu.Api.Extensions;
+using Mottu.Api.Middlewares;
+using Mottu.Infra.CrossCutting.IoC;
+using Serilog;
+using System.Diagnostics.CodeAnalysis;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+    .AddEnvironmentVariables();
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddCustomMvc();
+
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+builder.Services.AddApiVersioningConfiguration();
+
+builder.Services.AddCustomServices(builder.Configuration);
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services
+    .AddHealthChecks()
+    .AddNpgSql(connectionString)
+    .AddApplicationStatus()
+    .AddRabbitMQ();
+
+builder.Services.AddSwaggerDocumentation();
+
+builder.Host.UseSerilog((context, services, configuration) =>
+{
+    SerilogExtensions.ConfigureSerilog(context, services, configuration);
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseMiddleware<LoggingMiddleware>();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+app.UseSwaggerDocumentation();
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
 app.MapControllers();
 
+app.MapHealthChecks("/health");
+
 app.Run();
+
+[ExcludeFromCodeCoverage]
+public partial class Program { }
