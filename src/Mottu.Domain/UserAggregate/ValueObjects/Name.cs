@@ -16,11 +16,9 @@ namespace Mottu.Domain.UserAggregate.ValueObjects
             return new PersonName(v);
         }
 
-        public override string ToString() => Value;
-
         protected override IEnumerable<object> GetAtomicValues()
         {
-            throw new NotImplementedException();
+            yield return Value;
         }
     }
 }

@@ -5,6 +5,7 @@ using Mottu.Application.Common;
 using Mottu.Application.Courier.Models.Request;
 using Mottu.Application.Courier.Services;
 using Mottu.Application.Motorcycle.Models.Response;
+using Mottu.Application.User.Models.Response;
 using Mottu.Domain.SeedWork;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
@@ -42,7 +43,7 @@ namespace Mottu.Api.Controllers
         public async Task<IActionResult> CreateCourierAsync([FromBody] CreateCourierRequest request)
         {
             var result = await service.CreateCourier(request);
-            return Response<object>(BaseResponse<object>.Ok(result));
+            return Response<CourierResponse>(result.Id, result);
         }
 
         /// <summary>
@@ -65,10 +66,31 @@ namespace Mottu.Api.Controllers
         [SwaggerResponseExample(StatusCodes.Status409Conflict, typeof(GenericErrorConflictExample))]
         [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status500InternalServerError)]
         [SwaggerResponseExample(StatusCodes.Status500InternalServerError, typeof(GenericErrorInternalServerExample))]
-        public async Task<IActionResult> RentMotorcycleAsync(int id, IFormFile file)
+        public async Task<IActionResult> UploadCNHAsync(int id, IFormFile file)
         {
             var result = await service.UploadCNHPhoto(id, file);
             return Response<object>(BaseResponse<object>.Ok(null));
+        }
+
+        /// <summary>
+        /// Gets a specific courier by id
+        /// </summary>
+        /// <param name="id">id of the courier to be consulted</param>
+        /// <returns>The courier information.</returns>
+        [HttpGet("{id:int:min(1)}")]
+        [SwaggerOperation(
+            Summary = "Gets a specific courier by id",
+            Description = "Gets a specific courier by id"
+        )]
+        [ProducesResponseType(typeof(SuccessResponse<CourierResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status404NotFound)]
+        [SwaggerResponseExample(StatusCodes.Status404NotFound, typeof(GenericErrorNotFoundExample))]
+        [ProducesResponseType(typeof(BaseResponse<object>), StatusCodes.Status500InternalServerError)]
+        [SwaggerResponseExample(StatusCodes.Status500InternalServerError, typeof(GenericErrorInternalServerExample))]
+        public async Task<IActionResult> GetAsync(int id)
+        {
+            var result = await service.GetCourier(id);
+            return Response(BaseResponse<CourierResponse>.Ok(result));
         }
 
     }

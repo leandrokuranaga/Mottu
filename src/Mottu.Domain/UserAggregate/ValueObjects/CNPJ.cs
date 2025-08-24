@@ -63,7 +63,5 @@ namespace Mottu.Domain.UserAggregate.ValueObjects
 
             return d[12] - '0' == dv1 && d[13] - '0' == dv2;
         }
-
-        public override string ToString() => Number;
     }
 }
