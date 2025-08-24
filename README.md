@@ -24,3 +24,9 @@ docker-compose up -d
 
 Link do wiki: https://github.com/leandrokuranaga/Mottu/wiki
 Link do board: https://github.com/users/leandrokuranaga/projects/23
+
+
+## Build & Tests
+| CI | Status |
+| --- | --- | 
+| Validação PR| [![Pré-validação de Release/Hotfix](https://github.com/leandrokuranaga/mottu/actions/workflows/validate-pr.yml/badge.svg)](https://github.com/leandrokuranaga/mottu/actions/workflows/validate-pr.yml)
